@@ -16,6 +16,9 @@ migratedown:
 sqlc:
 	docker run --rm -v "C:\SimpleShop:/src" -w /src kjconroy/sqlc generate
 
+test:
+	go test -v -cover ./...
+
 .PHONY: 
 	postgres 
 	createdb dropdb 

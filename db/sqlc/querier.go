@@ -13,15 +13,16 @@ type Querier interface {
 	CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error)
 	CreatePuschaseHistory(ctx context.Context, arg CreatePuschaseHistoryParams) (PurchaseHistory, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
-	DeleteAuthor(ctx context.Context, username string) error
 	DeleteBankAccount(ctx context.Context, cardNumber string) error
 	DeleteProduct(ctx context.Context, idProduct int32) error
+	DeleteUser(ctx context.Context, username string) error
 	GetProduct(ctx context.Context, idProduct int32) (Product, error)
 	GetUser(ctx context.Context, username string) (User, error)
 	ListBankAccountsByUsername(ctx context.Context, username string) ([]BankAccount, error)
 	ListProducts(ctx context.Context) ([]Product, error)
 	ListPuschaseHistories(ctx context.Context) ([]PurchaseHistory, error)
-	ListUsers(ctx context.Context) ([]User, error)
+	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
+	UpdateHashedPasswordOfUser(ctx context.Context, arg UpdateHashedPasswordOfUserParams) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)
