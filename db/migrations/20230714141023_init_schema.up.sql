@@ -3,6 +3,7 @@ CREATE TABLE "users" (
   "full_name" varchar NOT NULL,
   "hashed_password" varchar NOT NULL,
   "email" varchar UNIQUE NOT NULL,
+  "level" boolean NOT NULL DEFAULT false,
   "password_changed_at" timestamptz NOT NULL DEFAULT (now()),
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -22,15 +23,17 @@ CREATE TABLE "products" (
   "kind_of_product" varchar NOT NULL DEFAULT '',
   "owner" varchar NOT NULL,
   "currency" varchar NOT NULL,
-  "price" serial,
+  "price" serial NOT NULL,
+  "quantity" serial NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "purchase_history" (
+  "id_purchase_history" serial PRIMARY KEY,
   "id_product" serial NOT NULL,
   "buyer" varchar NOT NULL,
-  "card_number" varchar,
+  "card_number" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -41,11 +44,13 @@ CREATE INDEX ON "bank_accounts" ("username");
 
 CREATE INDEX ON "bank_accounts" ("card_number");
 
-CREATE UNIQUE INDEX ON "bank_accounts" ("username", "card_number", "currency");
+CREATE UNIQUE INDEX ON "bank_accounts" ("username", "currency");
 
 CREATE INDEX ON "products" ("id_product");
 
 CREATE INDEX ON "products" ("owner");
+
+CREATE INDEX ON "purchase_history" ("id_purchase_history");
 
 CREATE INDEX ON "purchase_history" ("id_product");
 

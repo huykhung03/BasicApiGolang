@@ -7,34 +7,33 @@ package sqlc
 
 import (
 	"context"
-	"database/sql"
 )
 
 const createProduct = `-- name: CreateProduct :one
 INSERT INTO products (
-  id_product, product_name, kind_of_product, owner, currency, price
+  product_name, kind_of_product, owner, currency, price, quantity
 ) VALUES (
   $1, $2, $3, $4, $5, $6
-) RETURNING id_product, product_name, kind_of_product, owner, currency, price, created_at, update_at
+) RETURNING id_product, product_name, kind_of_product, owner, currency, price, quantity, created_at, update_at
 `
 
 type CreateProductParams struct {
-	IDProduct     int32         `json:"id_product"`
-	ProductName   string        `json:"product_name"`
-	KindOfProduct string        `json:"kind_of_product"`
-	Owner         string        `json:"owner"`
-	Currency      string        `json:"currency"`
-	Price         sql.NullInt32 `json:"price"`
+	ProductName   string `json:"product_name"`
+	KindOfProduct string `json:"kind_of_product"`
+	Owner         string `json:"owner"`
+	Currency      string `json:"currency"`
+	Price         int32  `json:"price"`
+	Quantity      int32  `json:"quantity"`
 }
 
 func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error) {
 	row := q.db.QueryRowContext(ctx, createProduct,
-		arg.IDProduct,
 		arg.ProductName,
 		arg.KindOfProduct,
 		arg.Owner,
 		arg.Currency,
 		arg.Price,
+		arg.Quantity,
 	)
 	var i Product
 	err := row.Scan(
@@ -44,6 +43,7 @@ func (q *Queries) CreateProduct(ctx context.Context, arg CreateProductParams) (P
 		&i.Owner,
 		&i.Currency,
 		&i.Price,
+		&i.Quantity,
 		&i.CreatedAt,
 		&i.UpdateAt,
 	)
@@ -61,7 +61,7 @@ func (q *Queries) DeleteProduct(ctx context.Context, idProduct int32) error {
 }
 
 const getProduct = `-- name: GetProduct :one
-SELECT id_product, product_name, kind_of_product, owner, currency, price, created_at, update_at FROM products
+SELECT id_product, product_name, kind_of_product, owner, currency, price, quantity, created_at, update_at FROM products
 WHERE id_product = $1 
 LIMIT 1
 `
@@ -76,6 +76,7 @@ func (q *Queries) GetProduct(ctx context.Context, idProduct int32) (Product, err
 		&i.Owner,
 		&i.Currency,
 		&i.Price,
+		&i.Quantity,
 		&i.CreatedAt,
 		&i.UpdateAt,
 	)
@@ -83,7 +84,7 @@ func (q *Queries) GetProduct(ctx context.Context, idProduct int32) (Product, err
 }
 
 const listProducts = `-- name: ListProducts :many
-SELECT id_product, product_name, kind_of_product, owner, currency, price, created_at, update_at FROM products
+SELECT id_product, product_name, kind_of_product, owner, currency, price, quantity, created_at, update_at FROM products
 ORDER BY id_product
 `
 
@@ -103,6 +104,7 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 			&i.Owner,
 			&i.Currency,
 			&i.Price,
+			&i.Quantity,
 			&i.CreatedAt,
 			&i.UpdateAt,
 		); err != nil {

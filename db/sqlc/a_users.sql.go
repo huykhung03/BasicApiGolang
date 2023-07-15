@@ -15,7 +15,7 @@ INSERT INTO users (
   username, full_name, hashed_password, email
 ) VALUES (
   $1, $2, $3, $4
-) RETURNING username, full_name, hashed_password, email, password_changed_at, created_at
+) RETURNING username, full_name, hashed_password, email, level, password_changed_at, created_at
 `
 
 type CreateUserParams struct {
@@ -38,6 +38,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.FullName,
 		&i.HashedPassword,
 		&i.Email,
+		&i.Level,
 		&i.PasswordChangedAt,
 		&i.CreatedAt,
 	)
@@ -55,9 +56,8 @@ func (q *Queries) DeleteUser(ctx context.Context, username string) error {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT username, full_name, hashed_password, email, password_changed_at, created_at FROM users
-WHERE username = $1 
-LIMIT 1
+SELECT username, full_name, hashed_password, email, level, password_changed_at, created_at FROM users
+WHERE username = $1
 `
 
 func (q *Queries) GetUser(ctx context.Context, username string) (User, error) {
@@ -68,6 +68,7 @@ func (q *Queries) GetUser(ctx context.Context, username string) (User, error) {
 		&i.FullName,
 		&i.HashedPassword,
 		&i.Email,
+		&i.Level,
 		&i.PasswordChangedAt,
 		&i.CreatedAt,
 	)
@@ -75,7 +76,7 @@ func (q *Queries) GetUser(ctx context.Context, username string) (User, error) {
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT username, full_name, hashed_password, email, password_changed_at, created_at FROM users
+SELECT username, full_name, hashed_password, email, level, password_changed_at, created_at FROM users
 ORDER BY username
 LIMIT $1
 OFFSET $2
@@ -100,6 +101,7 @@ func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, e
 			&i.FullName,
 			&i.HashedPassword,
 			&i.Email,
+			&i.Level,
 			&i.PasswordChangedAt,
 			&i.CreatedAt,
 		); err != nil {
@@ -121,7 +123,7 @@ UPDATE users
   set hashed_password = $2,
       password_changed_at = $3
 WHERE username = $1
-RETURNING username, full_name, hashed_password, email, password_changed_at, created_at
+RETURNING username, full_name, hashed_password, email, level, password_changed_at, created_at
 `
 
 type UpdateHashedPasswordOfUserParams struct {
@@ -138,6 +140,7 @@ func (q *Queries) UpdateHashedPasswordOfUser(ctx context.Context, arg UpdateHash
 		&i.FullName,
 		&i.HashedPassword,
 		&i.Email,
+		&i.Level,
 		&i.PasswordChangedAt,
 		&i.CreatedAt,
 	)

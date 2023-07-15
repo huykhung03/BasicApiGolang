@@ -8,3 +8,7 @@ INSERT INTO purchase_history (
 ) VALUES (
   $1, $2, $3
 ) RETURNING *;
+
+-- name: GetPurchaseHistory :one
+SELECT * FROM purchase_history
+WHERE id_purchase_history = $1;

@@ -9,7 +9,7 @@ ORDER BY id_product;
 
 -- name: CreateProduct :one
 INSERT INTO products (
-  id_product, product_name, kind_of_product, owner, currency, price
+  product_name, kind_of_product, owner, currency, price, quantity
 ) VALUES (
   $1, $2, $3, $4, $5, $6
 ) RETURNING *;

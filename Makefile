@@ -24,3 +24,4 @@ test:
 	createdb dropdb 
 	migrateup migratedown
 	sqlc
+	test

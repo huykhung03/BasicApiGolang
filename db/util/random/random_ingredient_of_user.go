@@ -1,4 +1,4 @@
-package randomuser
+package random
 
 import "simple_shop/db/util"
 

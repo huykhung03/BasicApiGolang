@@ -53,6 +53,30 @@ func (q *Queries) DeleteBankAccount(ctx context.Context, cardNumber string) erro
 	return err
 }
 
+const getCardNumberByUserNameAndCurrency = `-- name: GetCardNumberByUserNameAndCurrency :one
+SELECT username, card_number, currency, balance, created_at, update_at FROM bank_accounts
+WHERE username = $1 AND currency = $2
+`
+
+type GetCardNumberByUserNameAndCurrencyParams struct {
+	Username string `json:"username"`
+	Currency string `json:"currency"`
+}
+
+func (q *Queries) GetCardNumberByUserNameAndCurrency(ctx context.Context, arg GetCardNumberByUserNameAndCurrencyParams) (BankAccount, error) {
+	row := q.db.QueryRowContext(ctx, getCardNumberByUserNameAndCurrency, arg.Username, arg.Currency)
+	var i BankAccount
+	err := row.Scan(
+		&i.Username,
+		&i.CardNumber,
+		&i.Currency,
+		&i.Balance,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
 const listBankAccountsByUsername = `-- name: ListBankAccountsByUsername :many
 SELECT username, card_number, currency, balance, created_at, update_at FROM bank_accounts
 WHERE username = $1

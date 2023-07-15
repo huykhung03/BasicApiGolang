@@ -3,7 +3,7 @@ package sqlc
 import (
 	"context"
 	"database/sql"
-	randomuser "simple_shop/db/util/randomUser"
+	"simple_shop/db/util/random"
 	"testing"
 	"time"
 
@@ -12,10 +12,10 @@ import (
 
 func createRandomUser(t *testing.T) User {
 	arg := CreateUserParams{
-		Username:       randomuser.RandomUsername(),
-		FullName:       randomuser.RandomFullName(),
-		HashedPassword: randomuser.RandomHashedPassword(),
-		Email:          randomuser.RandomEmail(),
+		Username:       random.RandomUsername(),
+		FullName:       random.RandomFullName(),
+		HashedPassword: random.RandomHashedPassword(),
+		Email:          random.RandomEmail(),
 	}
 
 	username, err := testQueries.CreateUser(context.Background(), arg)
@@ -44,6 +44,7 @@ func TestGetUser(t *testing.T) {
 	require.Equal(t, username_1.FullName, username_2.FullName)
 	require.Equal(t, username_1.HashedPassword, username_2.HashedPassword)
 	require.Equal(t, username_1.Email, username_2.Email)
+	require.Equal(t, username_1.Level, username_2.Level)
 
 	require.WithinDuration(t, username_1.CreatedAt, username_2.CreatedAt, time.Second)
 	require.WithinDuration(t, username_1.PasswordChangedAt, username_2.PasswordChangedAt, time.Second)
@@ -65,6 +66,7 @@ func TestUpdateHashedPasswordOfUser(t *testing.T) {
 	require.Equal(t, username_1.FullName, username_2.FullName)
 	require.Equal(t, arg.HashedPassword, username_2.HashedPassword)
 	require.Equal(t, username_1.Email, username_2.Email)
+	require.Equal(t, username_1.Level, username_2.Level)
 
 	require.WithinDuration(t, username_1.CreatedAt, username_2.CreatedAt, time.Second)
 	require.WithinDuration(t, arg.PasswordChangedAt, username_2.PasswordChangedAt, time.Second)

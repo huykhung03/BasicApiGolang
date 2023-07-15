@@ -5,7 +5,6 @@
 package sqlc
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -19,22 +18,24 @@ type BankAccount struct {
 }
 
 type Product struct {
-	IDProduct     int32         `json:"id_product"`
-	ProductName   string        `json:"product_name"`
-	KindOfProduct string        `json:"kind_of_product"`
-	Owner         string        `json:"owner"`
-	Currency      string        `json:"currency"`
-	Price         sql.NullInt32 `json:"price"`
-	CreatedAt     time.Time     `json:"created_at"`
-	UpdateAt      time.Time     `json:"update_at"`
+	IDProduct     int32     `json:"id_product"`
+	ProductName   string    `json:"product_name"`
+	KindOfProduct string    `json:"kind_of_product"`
+	Owner         string    `json:"owner"`
+	Currency      string    `json:"currency"`
+	Price         int32     `json:"price"`
+	Quantity      int32     `json:"quantity"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdateAt      time.Time `json:"update_at"`
 }
 
 type PurchaseHistory struct {
-	IDProduct  int32          `json:"id_product"`
-	Buyer      string         `json:"buyer"`
-	CardNumber sql.NullString `json:"card_number"`
-	CreatedAt  time.Time      `json:"created_at"`
-	UpdateAt   time.Time      `json:"update_at"`
+	IDPurchaseHistory int32     `json:"id_purchase_history"`
+	IDProduct         int32     `json:"id_product"`
+	Buyer             string    `json:"buyer"`
+	CardNumber        string    `json:"card_number"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdateAt          time.Time `json:"update_at"`
 }
 
 type User struct {
@@ -42,6 +43,7 @@ type User struct {
 	FullName          string    `json:"full_name"`
 	HashedPassword    string    `json:"hashed_password"`
 	Email             string    `json:"email"`
+	Level             bool      `json:"level"`
 	PasswordChangedAt time.Time `json:"password_changed_at"`
 	CreatedAt         time.Time `json:"created_at"`
 }

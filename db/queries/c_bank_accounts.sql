@@ -13,3 +13,7 @@ INSERT INTO bank_accounts (
 -- name: DeleteBankAccount :exec
 DELETE FROM bank_accounts
 WHERE card_number = $1;
+
+-- name: GetCardNumberByUserNameAndCurrency :one
+SELECT * FROM bank_accounts
+WHERE username = $1 AND currency = $2;
