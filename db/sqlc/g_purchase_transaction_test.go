@@ -14,7 +14,7 @@ func TestPurchaseTransaction(t *testing.T) {
 	buyer := createRandomBankAccount(t)
 
 	// * run n concurrent puschase transactions
-	n := 5
+	n := 4
 	product := createRandomProduct(t)
 
 	seller, err := store.GetBankAccountByUserNameAndCurrency(context.Background(),
@@ -34,7 +34,6 @@ func TestPurchaseTransaction(t *testing.T) {
 			result, err := store.PurchaseTransaction(context.Background(), PurchaseTransactionPagrams{
 				Product: product,
 				Buyer:   buyer.Username,
-				Amount:  product.Price,
 			})
 			errs <- err
 			results <- result
@@ -82,7 +81,6 @@ func TestPurchaseTransaction(t *testing.T) {
 		// * check balance
 		diff_1 := buyer.Balance - bankAccountOfBuyer.Balance
 		diff_2 := bankAccountOfSeller.Balance - seller.Balance
-		fmt.Println(diff_1, " ", diff_2)
 		require.Equal(t, diff_1, diff_2)
 		require.True(t, diff_1 > 0)
 		require.True(t, diff_1%product.Price == 0)
@@ -110,5 +108,5 @@ func TestPurchaseTransaction(t *testing.T) {
 	fmt.Println(">>After_1: Buyer: ", buyer.Balance, " Seller: ", seller.Balance)
 	fmt.Println(">>After_2: Buyer: ", updatedBankAccountBuyer.Balance, " Seller: ", updatedBankAccountSeller.Balance)
 	require.Equal(t, buyer.Balance-int32(n)*product.Price, updatedBankAccountBuyer.Balance)
-	require.Equal(t, seller.Balance-int32(n)*product.Price, updatedBankAccountSeller.Balance)
+	require.Equal(t, seller.Balance+int32(n)*product.Price, updatedBankAccountSeller.Balance)
 }

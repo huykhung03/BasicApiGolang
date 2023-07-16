@@ -2,12 +2,12 @@ package sqlc
 
 import (
 	"context"
+	"fmt"
 )
 
 type PurchaseTransactionPagrams struct {
 	Product Product `json:"product"`
 	Buyer   string  `json:"username_buyer"`
-	Amount  int32   `json:"amount"`
 }
 
 type PurchaseTransactionResult struct {
@@ -23,8 +23,10 @@ type PurchaseTransactionResult struct {
 func (store *Store) PurchaseTransaction(ctx context.Context, arg PurchaseTransactionPagrams) (
 	PurchaseTransactionResult, error) {
 	var result PurchaseTransactionResult
+
 	err := store.execTx(context.Background(), func(q *Queries) error {
 		// * get bank account of buyer with username and currency
+		fmt.Println("\nget account buyer")
 		bankAccountOfBuyer, err := q.GetBankAccountByUserNameAndCurrency(context.Background(),
 			GetBankAccountByUserNameAndCurrencyParams{
 				Username: arg.Buyer,
@@ -35,6 +37,7 @@ func (store *Store) PurchaseTransaction(ctx context.Context, arg PurchaseTransac
 		}
 
 		// * step 1
+		fmt.Println("create purchase history")
 		result.PurchaseHistory, err = q.CreatePuschaseHistory(context.Background(),
 			CreatePuschaseHistoryParams{
 				IDProduct:         arg.Product.IDProduct,
@@ -46,17 +49,19 @@ func (store *Store) PurchaseTransaction(ctx context.Context, arg PurchaseTransac
 		}
 
 		// * step 2
+		fmt.Println("update account buyer")
 		result.BankAccountOfBuyer, err = q.AddBankAccountBalance(context.Background(),
 			AddBankAccountBalanceParams{
-				Currency:   "USD",
-				Amount:     -arg.Product.Price,
+				Currency:   bankAccountOfBuyer.Currency,
+				Balance:    bankAccountOfBuyer.Balance - arg.Product.Price,
 				CardNumber: bankAccountOfBuyer.CardNumber,
 			})
 		if err != nil {
 			return err
 		}
 
-		// * get bankaccount of buyer with username and currency
+		// * get bank account of seller with username and currency
+		fmt.Println("get account seller")
 		bankAccountOfSeller, err := q.GetBankAccountByUserNameAndCurrency(context.Background(),
 			GetBankAccountByUserNameAndCurrencyParams{
 				Username: arg.Product.Owner,
@@ -67,10 +72,12 @@ func (store *Store) PurchaseTransaction(ctx context.Context, arg PurchaseTransac
 		}
 
 		// * step 3
+		fmt.Println("update account seller")
+		fmt.Println()
 		result.BankAccountOfSeller, err = q.AddBankAccountBalance(context.Background(),
 			AddBankAccountBalanceParams{
 				Currency:   "USD",
-				Amount:     arg.Product.Price,
+				Balance:    bankAccountOfSeller.Balance + arg.Product.Price,
 				CardNumber: bankAccountOfSeller.CardNumber,
 			})
 		if err != nil {
