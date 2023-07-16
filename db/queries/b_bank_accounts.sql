@@ -14,9 +14,14 @@ INSERT INTO bank_accounts (
 DELETE FROM bank_accounts
 WHERE card_number = $1;
 
--- name: GetCardNumberByUserNameAndCurrency :one
+-- name: GetBankAccountByUserNameAndCurrency :one
 SELECT * FROM bank_accounts
 WHERE username = $1 AND currency = $2;
+
+-- name: GetBankAccountByUserNameAndCurrencyForUpdate :one
+SELECT * FROM bank_accounts
+WHERE username = $1 AND currency = $2
+FOR UPDATE;
 
 -- name: AddBankAccountBalance :one
 UPDATE bank_accounts

@@ -33,7 +33,7 @@ CREATE TABLE "purchase_history" (
   "id_purchase_history" serial PRIMARY KEY,
   "id_product" serial NOT NULL,
   "buyer" varchar NOT NULL,
-  "card_number" varchar NOT NULL,
+  "card_number_of_buyer" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT (now())
 );
@@ -64,4 +64,4 @@ ALTER TABLE "purchase_history" ADD FOREIGN KEY ("id_product") REFERENCES "produc
 
 ALTER TABLE "purchase_history" ADD FOREIGN KEY ("buyer") REFERENCES "users" ("username");
 
-ALTER TABLE "purchase_history" ADD FOREIGN KEY ("card_number") REFERENCES "bank_accounts" ("card_number");
+ALTER TABLE "purchase_history" ADD FOREIGN KEY ("card_number_of_buyer") REFERENCES "bank_accounts" ("card_number");

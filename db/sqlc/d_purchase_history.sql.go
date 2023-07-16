@@ -11,26 +11,26 @@ import (
 
 const createPuschaseHistory = `-- name: CreatePuschaseHistory :one
 INSERT INTO purchase_history (
-  id_product, buyer, card_number
+  id_product, buyer, card_number_of_buyer
 ) VALUES (
   $1, $2, $3
-) RETURNING id_purchase_history, id_product, buyer, card_number, created_at, update_at
+) RETURNING id_purchase_history, id_product, buyer, card_number_of_buyer, created_at, update_at
 `
 
 type CreatePuschaseHistoryParams struct {
-	IDProduct  int32  `json:"id_product"`
-	Buyer      string `json:"buyer"`
-	CardNumber string `json:"card_number"`
+	IDProduct         int32  `json:"id_product"`
+	Buyer             string `json:"buyer"`
+	CardNumberOfBuyer string `json:"card_number_of_buyer"`
 }
 
 func (q *Queries) CreatePuschaseHistory(ctx context.Context, arg CreatePuschaseHistoryParams) (PurchaseHistory, error) {
-	row := q.db.QueryRowContext(ctx, createPuschaseHistory, arg.IDProduct, arg.Buyer, arg.CardNumber)
+	row := q.db.QueryRowContext(ctx, createPuschaseHistory, arg.IDProduct, arg.Buyer, arg.CardNumberOfBuyer)
 	var i PurchaseHistory
 	err := row.Scan(
 		&i.IDPurchaseHistory,
 		&i.IDProduct,
 		&i.Buyer,
-		&i.CardNumber,
+		&i.CardNumberOfBuyer,
 		&i.CreatedAt,
 		&i.UpdateAt,
 	)
@@ -38,7 +38,7 @@ func (q *Queries) CreatePuschaseHistory(ctx context.Context, arg CreatePuschaseH
 }
 
 const getPurchaseHistory = `-- name: GetPurchaseHistory :one
-SELECT id_purchase_history, id_product, buyer, card_number, created_at, update_at FROM purchase_history
+SELECT id_purchase_history, id_product, buyer, card_number_of_buyer, created_at, update_at FROM purchase_history
 WHERE id_purchase_history = $1
 `
 
@@ -49,7 +49,7 @@ func (q *Queries) GetPurchaseHistory(ctx context.Context, idPurchaseHistory int3
 		&i.IDPurchaseHistory,
 		&i.IDProduct,
 		&i.Buyer,
-		&i.CardNumber,
+		&i.CardNumberOfBuyer,
 		&i.CreatedAt,
 		&i.UpdateAt,
 	)
@@ -57,7 +57,7 @@ func (q *Queries) GetPurchaseHistory(ctx context.Context, idPurchaseHistory int3
 }
 
 const listPuschaseHistories = `-- name: ListPuschaseHistories :many
-SELECT id_purchase_history, id_product, buyer, card_number, created_at, update_at FROM purchase_history
+SELECT id_purchase_history, id_product, buyer, card_number_of_buyer, created_at, update_at FROM purchase_history
 ORDER BY created_at
 `
 
@@ -74,7 +74,7 @@ func (q *Queries) ListPuschaseHistories(ctx context.Context) ([]PurchaseHistory,
 			&i.IDPurchaseHistory,
 			&i.IDProduct,
 			&i.Buyer,
-			&i.CardNumber,
+			&i.CardNumberOfBuyer,
 			&i.CreatedAt,
 			&i.UpdateAt,
 		); err != nil {

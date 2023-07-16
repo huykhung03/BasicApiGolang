@@ -38,7 +38,7 @@ func createRandomBankAccountAdmin(t *testing.T) BankAccount {
 		Username:   admin.Username,
 		CardNumber: util.RandomStringNumber(9),
 		Currency:   "USD",
-		Balance:    int32(util.RandomIntNumber(5000, 10000)),
+		Balance:    1000,
 	}
 
 	bankAccount, err := testQueries.CreateBankAccount(context.Background(), arg)
@@ -61,7 +61,7 @@ func createRandomProduct(t *testing.T) Product {
 		KindOfProduct: util.RandomString(8),
 		Owner:         username.Username,
 		Currency:      "USD",
-		Price:         int32(util.RandomIntNumber(50, 100)),
+		Price:         10,
 		Quantity:      int32(util.RandomIntNumber(20, 50)),
 	}
 

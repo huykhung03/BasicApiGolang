@@ -5,61 +5,80 @@ import (
 )
 
 type PurchaseTransactionPagrams struct {
-	Product       Product `json:"product"`
-	UsernameBuyer string  `json:"username_buyer"`
-}
-
-type ChangedBalance struct {
-	Username       string `json:"username"`
-	ChangedBalance int32  `json:"changed_balance"`
+	Product Product `json:"product"`
+	Buyer   string  `json:"username_buyer"`
+	Amount  int32   `json:"amount"`
 }
 
 type PurchaseTransactionResult struct {
-	PurchaseHistory         PurchaseHistory `json:"purchase_history"`
-	BalanceOfUsernameBuyer  ChangedBalance  `json:"balance_of_username_buyer"`
-	BalanceOfUsernameSeller ChangedBalance  `json:"balance_of_username_seller"`
+	PurchaseHistory     PurchaseHistory `json:"purchase_history"`
+	BankAccountOfBuyer  BankAccount     `json:"bank_acount_of_buyer"`
+	BankAccountOfSeller BankAccount     `json:"bank_acount_of_seller"`
 }
 
-// PurchaseTransaction mades a purchase from userA to userB
+// PurchaseTransaction mades a purchase from Buyer to Seller
+// Step 1: Create the purchase history
+// Step 2: Deduct money from account buyer
+// Step 3: Add money from account seller
 func (store *Store) PurchaseTransaction(ctx context.Context, arg PurchaseTransactionPagrams) (
 	PurchaseTransactionResult, error) {
 	var result PurchaseTransactionResult
 	err := store.execTx(context.Background(), func(q *Queries) error {
-		argCardNumber := GetCardNumberByUserNameAndCurrencyParams{
-			Username: arg.UsernameBuyer,
-			Currency: "USD",
-		}
-
-		bankAccountOfUsernameBuyer, err := q.GetCardNumberByUserNameAndCurrency(context.Background(), argCardNumber)
+		// * get bank account of buyer with username and currency
+		bankAccountOfBuyer, err := q.GetBankAccountByUserNameAndCurrency(context.Background(),
+			GetBankAccountByUserNameAndCurrencyParams{
+				Username: arg.Buyer,
+				Currency: "USD",
+			})
 		if err != nil {
 			return err
 		}
 
-		result.PurchaseHistory, err = q.CreatePuschaseHistory(context.Background(), CreatePuschaseHistoryParams{
-			IDProduct:  arg.Product.IDProduct,
-			Buyer:      arg.UsernameBuyer,
-			CardNumber: bankAccountOfUsernameBuyer.CardNumber,
-		})
+		// * step 1
+		result.PurchaseHistory, err = q.CreatePuschaseHistory(context.Background(),
+			CreatePuschaseHistoryParams{
+				IDProduct:         arg.Product.IDProduct,
+				Buyer:             arg.Buyer,
+				CardNumberOfBuyer: bankAccountOfBuyer.CardNumber,
+			})
 		if err != nil {
 			return err
 		}
 
-		product, err := q.GetProduct(context.Background(), result.PurchaseHistory.IDProduct)
+		// * step 2
+		result.BankAccountOfBuyer, err = q.AddBankAccountBalance(context.Background(),
+			AddBankAccountBalanceParams{
+				Currency:   "USD",
+				Amount:     -arg.Product.Price,
+				CardNumber: bankAccountOfBuyer.CardNumber,
+			})
 		if err != nil {
 			return err
 		}
 
-		result.BalanceOfUsernameBuyer = ChangedBalance{
-			Username:       arg.UsernameBuyer,
-			ChangedBalance: -product.Price,
+		// * get bankaccount of buyer with username and currency
+		bankAccountOfSeller, err := q.GetBankAccountByUserNameAndCurrency(context.Background(),
+			GetBankAccountByUserNameAndCurrencyParams{
+				Username: arg.Product.Owner,
+				Currency: "USD",
+			})
+		if err != nil {
+			return err
 		}
 
-		result.BalanceOfUsernameSeller = ChangedBalance{
-			Username:       product.Owner,
-			ChangedBalance: product.Price,
+		// * step 3
+		result.BankAccountOfSeller, err = q.AddBankAccountBalance(context.Background(),
+			AddBankAccountBalanceParams{
+				Currency:   "USD",
+				Amount:     arg.Product.Price,
+				CardNumber: bankAccountOfSeller.CardNumber,
+			})
+		if err != nil {
+			return err
 		}
 
 		return nil
 	})
+
 	return result, err
 }

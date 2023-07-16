@@ -33,7 +33,7 @@ type PurchaseHistory struct {
 	IDPurchaseHistory int32     `json:"id_purchase_history"`
 	IDProduct         int32     `json:"id_product"`
 	Buyer             string    `json:"buyer"`
-	CardNumber        string    `json:"card_number"`
+	CardNumberOfBuyer string    `json:"card_number_of_buyer"`
 	CreatedAt         time.Time `json:"created_at"`
 	UpdateAt          time.Time `json:"update_at"`
 }

@@ -18,7 +18,8 @@ type Querier interface {
 	DeleteBankAccount(ctx context.Context, cardNumber string) error
 	DeleteProduct(ctx context.Context, idProduct int32) error
 	DeleteUser(ctx context.Context, username string) error
-	GetCardNumberByUserNameAndCurrency(ctx context.Context, arg GetCardNumberByUserNameAndCurrencyParams) (BankAccount, error)
+	GetBankAccountByUserNameAndCurrency(ctx context.Context, arg GetBankAccountByUserNameAndCurrencyParams) (BankAccount, error)
+	GetBankAccountByUserNameAndCurrencyForUpdate(ctx context.Context, arg GetBankAccountByUserNameAndCurrencyForUpdateParams) (BankAccount, error)
 	GetProduct(ctx context.Context, idProduct int32) (Product, error)
 	GetPurchaseHistory(ctx context.Context, idPurchaseHistory int32) (PurchaseHistory, error)
 	GetUser(ctx context.Context, username string) (User, error)

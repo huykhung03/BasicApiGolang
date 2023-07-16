@@ -4,7 +4,7 @@ ORDER BY created_at;
 
 -- name: CreatePuschaseHistory :one
 INSERT INTO purchase_history (
-  id_product, buyer, card_number
+  id_product, buyer, card_number_of_buyer
 ) VALUES (
   $1, $2, $3
 ) RETURNING *;
