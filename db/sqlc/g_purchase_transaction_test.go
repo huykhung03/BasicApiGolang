@@ -30,8 +30,10 @@ func TestPurchaseTransaction(t *testing.T) {
 	results := make(chan PurchaseTransactionResult)
 
 	for i := 0; i < n; i++ {
+		txName := fmt.Sprintf("tx %d", i)
 		go func() {
-			result, err := store.PurchaseTransaction(context.Background(), PurchaseTransactionPagrams{
+			ctx := context.WithValue(context.Background(), txKey, txName)
+			result, err := store.PurchaseTransaction(ctx, PurchaseTransactionPagrams{
 				Product: product,
 				Buyer:   buyer.Username,
 			})
