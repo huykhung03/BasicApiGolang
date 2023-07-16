@@ -15,6 +15,13 @@ INSERT INTO users (
   $1, $2, $3, $4
 ) RETURNING *;
 
+-- name: CreateAdmin :one
+INSERT INTO users (
+  username, full_name, hashed_password, email, level
+) VALUES (
+  $1, $2, $3, $4, $5
+) RETURNING *;
+
 -- name: DeleteUser :exec
 DELETE FROM users
 WHERE username = $1;

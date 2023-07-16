@@ -17,3 +17,9 @@ WHERE card_number = $1;
 -- name: GetCardNumberByUserNameAndCurrency :one
 SELECT * FROM bank_accounts
 WHERE username = $1 AND currency = $2;
+
+-- name: AddBankAccountBalance :one
+UPDATE bank_accounts
+SET balance = balance + sqlc.arg(amount)
+WHERE card_number = sqlc.arg(card_number) AND currency = $1
+RETURNING *;

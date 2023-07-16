@@ -10,6 +10,43 @@ import (
 	"time"
 )
 
+const createAdmin = `-- name: CreateAdmin :one
+INSERT INTO users (
+  username, full_name, hashed_password, email, level
+) VALUES (
+  $1, $2, $3, $4, $5
+) RETURNING username, full_name, hashed_password, email, level, password_changed_at, created_at
+`
+
+type CreateAdminParams struct {
+	Username       string `json:"username"`
+	FullName       string `json:"full_name"`
+	HashedPassword string `json:"hashed_password"`
+	Email          string `json:"email"`
+	Level          bool   `json:"level"`
+}
+
+func (q *Queries) CreateAdmin(ctx context.Context, arg CreateAdminParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, createAdmin,
+		arg.Username,
+		arg.FullName,
+		arg.HashedPassword,
+		arg.Email,
+		arg.Level,
+	)
+	var i User
+	err := row.Scan(
+		&i.Username,
+		&i.FullName,
+		&i.HashedPassword,
+		&i.Email,
+		&i.Level,
+		&i.PasswordChangedAt,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
   username, full_name, hashed_password, email

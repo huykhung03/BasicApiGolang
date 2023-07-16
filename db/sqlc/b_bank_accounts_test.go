@@ -13,9 +13,9 @@ func createRandomBankAccount(t *testing.T) BankAccount {
 
 	arg := CreateBankAccountParams{
 		Username:   username.Username,
-		CardNumber: util.RandomStringNumber(12),
+		CardNumber: util.RandomStringNumber(8),
 		Currency:   "USD",
-		Balance:    int32(util.RandomIntNumber(1000, 10000)),
+		Balance:    int32(util.RandomIntNumber(1000, 5000)),
 	}
 
 	bankAccount, err := testQueries.CreateBankAccount(context.Background(), arg)

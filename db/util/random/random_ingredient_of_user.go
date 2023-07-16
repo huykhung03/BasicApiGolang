@@ -15,7 +15,7 @@ func RandomHashedPassword() string {
 }
 
 func RandomEmail() string {
-	prefix := util.RandomString(12)
+	prefix := util.RandomString(8)
 	prefix = prefix + "@gmail.com"
 	return prefix
 }

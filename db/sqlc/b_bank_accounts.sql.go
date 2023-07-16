@@ -9,6 +9,33 @@ import (
 	"context"
 )
 
+const addBankAccountBalance = `-- name: AddBankAccountBalance :one
+UPDATE bank_accounts
+SET balance = balance + $2
+WHERE card_number = $3 AND currency = $1
+RETURNING username, card_number, currency, balance, created_at, update_at
+`
+
+type AddBankAccountBalanceParams struct {
+	Currency   string `json:"currency"`
+	Amount     int32  `json:"amount"`
+	CardNumber string `json:"card_number"`
+}
+
+func (q *Queries) AddBankAccountBalance(ctx context.Context, arg AddBankAccountBalanceParams) (BankAccount, error) {
+	row := q.db.QueryRowContext(ctx, addBankAccountBalance, arg.Currency, arg.Amount, arg.CardNumber)
+	var i BankAccount
+	err := row.Scan(
+		&i.Username,
+		&i.CardNumber,
+		&i.Currency,
+		&i.Balance,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}
+
 const createBankAccount = `-- name: CreateBankAccount :one
 INSERT INTO bank_accounts (
   username, card_number, currency, balance

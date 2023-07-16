@@ -9,6 +9,8 @@ import (
 )
 
 type Querier interface {
+	AddBankAccountBalance(ctx context.Context, arg AddBankAccountBalanceParams) (BankAccount, error)
+	CreateAdmin(ctx context.Context, arg CreateAdminParams) (User, error)
 	CreateBankAccount(ctx context.Context, arg CreateBankAccountParams) (BankAccount, error)
 	CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error)
 	CreatePuschaseHistory(ctx context.Context, arg CreatePuschaseHistoryParams) (PurchaseHistory, error)

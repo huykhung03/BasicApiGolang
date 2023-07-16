@@ -5,9 +5,8 @@ import (
 )
 
 type PurchaseTransactionPagrams struct {
-	UsernameBuyer  string  `json:"username_buyer"`
-	UsernameSeller string  `json:"username_seller"`
-	Product        Product `json:"product"`
+	Product       Product `json:"product"`
+	UsernameBuyer string  `json:"username_buyer"`
 }
 
 type ChangedBalance struct {
