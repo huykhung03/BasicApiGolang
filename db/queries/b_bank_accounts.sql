@@ -25,6 +25,6 @@ FOR UPDATE;
 
 -- name: AddBankAccountBalance :one
 UPDATE bank_accounts
-SET balance = $1
-WHERE card_number = $2 AND currency = $3
+SET balance = balance + sqlc.arg(amount)
+WHERE card_number = sqlc.arg(card_number) AND currency = $1
 RETURNING *;

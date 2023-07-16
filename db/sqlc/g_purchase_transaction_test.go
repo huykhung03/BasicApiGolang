@@ -14,7 +14,7 @@ func TestPurchaseTransaction(t *testing.T) {
 	buyer := createRandomBankAccount(t)
 
 	// * run n concurrent puschase transactions
-	n := 4
+	n := 5
 	product := createRandomProduct(t)
 
 	seller, err := store.GetBankAccountByUserNameAndCurrency(context.Background(),
