@@ -20,8 +20,6 @@ func NewStore(db *sql.DB) *Store {
 	}
 }
 
-var txKey = struct{}{}
-
 // execTx executes a function within a database transaction
 func (store *Store) execTx(ctx context.Context, fn func(*Queries) error) error {
 	// * Second argument in store.db.BeginTx() is isolation level in database
