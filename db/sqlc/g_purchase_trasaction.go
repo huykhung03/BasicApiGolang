@@ -19,7 +19,7 @@ type PurchaseTransactionResult struct {
 // Step 1: Create the purchase history
 // Step 2: Deduct money from account buyer
 // Step 3: Add money from account seller
-func (store *Store) PurchaseTransaction(ctx context.Context, arg PurchaseTransactionPagrams) (
+func (store *SQLStore) PurchaseTransaction(ctx context.Context, arg PurchaseTransactionPagrams) (
 	PurchaseTransactionResult, error) {
 	var result PurchaseTransactionResult
 

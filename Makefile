@@ -19,9 +19,13 @@ sqlc:
 test:
 	go test -v -cover ./...
 
+mock:
+	mockgen -package mock -destination db/mock/store.go simple_shop/db/sqlc Store
+
 .PHONY: 
 	postgres 
 	createdb dropdb 
 	migrateup migratedown
 	sqlc
 	test
+	mock
