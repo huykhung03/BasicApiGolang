@@ -331,3 +331,18 @@ func (mr *MockStoreMockRecorder) UpdateHashedPasswordOfUser(arg0, arg1 interface
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateHashedPasswordOfUser", reflect.TypeOf((*MockStore)(nil).UpdateHashedPasswordOfUser), arg0, arg1)
 }
+
+// UpdateQuantityOfProduct mocks base method.
+func (m *MockStore) UpdateQuantityOfProduct(arg0 context.Context, arg1 sqlc.UpdateQuantityOfProductParams) (sqlc.Product, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateQuantityOfProduct", arg0, arg1)
+	ret0, _ := ret[0].(sqlc.Product)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// UpdateQuantityOfProduct indicates an expected call of UpdateQuantityOfProduct.
+func (mr *MockStoreMockRecorder) UpdateQuantityOfProduct(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateQuantityOfProduct", reflect.TypeOf((*MockStore)(nil).UpdateQuantityOfProduct), arg0, arg1)
+}

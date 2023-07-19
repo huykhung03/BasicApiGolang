@@ -120,3 +120,32 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 	}
 	return items, nil
 }
+
+const updateQuantityOfProduct = `-- name: UpdateQuantityOfProduct :one
+UPDATE products
+SET quantity = quantity - $1
+WHERE id_product = $2
+RETURNING id_product, product_name, kind_of_product, owner, currency, price, quantity, created_at, update_at
+`
+
+type UpdateQuantityOfProductParams struct {
+	Amount    int32 `json:"amount"`
+	IDProduct int32 `json:"id_product"`
+}
+
+func (q *Queries) UpdateQuantityOfProduct(ctx context.Context, arg UpdateQuantityOfProductParams) (Product, error) {
+	row := q.db.QueryRowContext(ctx, updateQuantityOfProduct, arg.Amount, arg.IDProduct)
+	var i Product
+	err := row.Scan(
+		&i.IDProduct,
+		&i.ProductName,
+		&i.KindOfProduct,
+		&i.Owner,
+		&i.Currency,
+		&i.Price,
+		&i.Quantity,
+		&i.CreatedAt,
+		&i.UpdateAt,
+	)
+	return i, err
+}

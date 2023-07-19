@@ -28,6 +28,7 @@ type Querier interface {
 	ListPuschaseHistories(ctx context.Context) ([]PurchaseHistory, error)
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
 	UpdateHashedPasswordOfUser(ctx context.Context, arg UpdateHashedPasswordOfUserParams) (User, error)
+	UpdateQuantityOfProduct(ctx context.Context, arg UpdateQuantityOfProductParams) (Product, error)
 }
 
 var _ Querier = (*Queries)(nil)

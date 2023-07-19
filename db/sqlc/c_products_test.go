@@ -11,10 +11,13 @@ import (
 
 // Three below creating functions create admin
 func createRandomAdmin(t *testing.T) User {
+	hashedPassword, err := util.HashPassword(random.RandomHashedPassword())
+	require.NoError(t, err)
+
 	arg := CreateAdminParams{
 		Username:       random.RandomUsername(),
 		FullName:       random.RandomFullName(),
-		HashedPassword: random.RandomHashedPassword(),
+		HashedPassword: hashedPassword,
 		Email:          random.RandomEmail(),
 		Level:          true,
 	}

@@ -3,6 +3,7 @@ package sqlc
 import (
 	"context"
 	"database/sql"
+	"simple_shop/db/util"
 	"simple_shop/db/util/random"
 	"testing"
 	"time"
@@ -11,10 +12,13 @@ import (
 )
 
 func createRandomUser(t *testing.T) User {
+	hashedPassword, err := util.HashPassword(random.RandomHashedPassword())
+	require.NoError(t, err)
+
 	arg := CreateUserParams{
 		Username:       random.RandomUsername(),
 		FullName:       random.RandomFullName(),
-		HashedPassword: random.RandomHashedPassword(),
+		HashedPassword: hashedPassword,
 		Email:          random.RandomEmail(),
 	}
 

@@ -36,18 +36,22 @@ func TestPurchaseTransactionDeadLock(t *testing.T) {
 	errs := make(chan error)
 
 	for i := 0; i < n; i++ {
-		buyerTmp := productOfBuyer.Owner
 		product := productOfBuyer
+		buyerTmp := productOfBuyer.Owner
+		cardNumber := bankAccountOfBuyer.CardNumber
 
 		if i%2 == 1 {
 			buyerTmp = bankAccountOfSeller.Username
 			product = productOfSeller
+			cardNumber = bankAccountOfSeller.CardNumber
 		}
 
 		go func() {
 			_, err := store.PurchaseTransaction(context.Background(), PurchaseTransactionPagrams{
-				Product: product,
-				Buyer:   buyerTmp,
+				Product:           product,
+				PurchaseQuantity:  2,
+				Buyer:             buyerTmp,
+				CardNumberOfBuyer: cardNumber,
 			})
 			errs <- err
 		}()

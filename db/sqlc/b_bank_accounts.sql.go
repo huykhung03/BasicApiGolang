@@ -13,7 +13,7 @@ const addBankAccountBalance = `-- name: AddBankAccountBalance :one
 UPDATE bank_accounts
 SET balance = balance + $2
 WHERE card_number = $3 AND currency = $1
-RETURNING username, card_number, currency, balance, created_at, update_at
+RETURNING username, card_number, balance, currency, created_at, update_at
 `
 
 type AddBankAccountBalanceParams struct {
@@ -28,8 +28,8 @@ func (q *Queries) AddBankAccountBalance(ctx context.Context, arg AddBankAccountB
 	err := row.Scan(
 		&i.Username,
 		&i.CardNumber,
-		&i.Currency,
 		&i.Balance,
+		&i.Currency,
 		&i.CreatedAt,
 		&i.UpdateAt,
 	)
@@ -41,7 +41,7 @@ INSERT INTO bank_accounts (
   username, card_number, currency, balance
 ) VALUES (
   $1, $2, $3, $4
-) RETURNING username, card_number, currency, balance, created_at, update_at
+) RETURNING username, card_number, balance, currency, created_at, update_at
 `
 
 type CreateBankAccountParams struct {
@@ -62,8 +62,8 @@ func (q *Queries) CreateBankAccount(ctx context.Context, arg CreateBankAccountPa
 	err := row.Scan(
 		&i.Username,
 		&i.CardNumber,
-		&i.Currency,
 		&i.Balance,
+		&i.Currency,
 		&i.CreatedAt,
 		&i.UpdateAt,
 	)
@@ -81,7 +81,7 @@ func (q *Queries) DeleteBankAccount(ctx context.Context, cardNumber string) erro
 }
 
 const getBankAccountByUserNameAndCurrency = `-- name: GetBankAccountByUserNameAndCurrency :one
-SELECT username, card_number, currency, balance, created_at, update_at FROM bank_accounts
+SELECT username, card_number, balance, currency, created_at, update_at FROM bank_accounts
 WHERE username = $1 AND currency = $2
 `
 
@@ -96,8 +96,8 @@ func (q *Queries) GetBankAccountByUserNameAndCurrency(ctx context.Context, arg G
 	err := row.Scan(
 		&i.Username,
 		&i.CardNumber,
-		&i.Currency,
 		&i.Balance,
+		&i.Currency,
 		&i.CreatedAt,
 		&i.UpdateAt,
 	)
@@ -105,7 +105,7 @@ func (q *Queries) GetBankAccountByUserNameAndCurrency(ctx context.Context, arg G
 }
 
 const getBankAccountByUserNameAndCurrencyForUpdate = `-- name: GetBankAccountByUserNameAndCurrencyForUpdate :one
-SELECT username, card_number, currency, balance, created_at, update_at FROM bank_accounts
+SELECT username, card_number, balance, currency, created_at, update_at FROM bank_accounts
 WHERE username = $1 AND currency = $2
 FOR UPDATE
 `
@@ -121,8 +121,8 @@ func (q *Queries) GetBankAccountByUserNameAndCurrencyForUpdate(ctx context.Conte
 	err := row.Scan(
 		&i.Username,
 		&i.CardNumber,
-		&i.Currency,
 		&i.Balance,
+		&i.Currency,
 		&i.CreatedAt,
 		&i.UpdateAt,
 	)
@@ -130,7 +130,7 @@ func (q *Queries) GetBankAccountByUserNameAndCurrencyForUpdate(ctx context.Conte
 }
 
 const listBankAccountsByUsername = `-- name: ListBankAccountsByUsername :many
-SELECT username, card_number, currency, balance, created_at, update_at FROM bank_accounts
+SELECT username, card_number, balance, currency, created_at, update_at FROM bank_accounts
 WHERE username = $1
 ORDER BY username
 `
@@ -147,8 +147,8 @@ func (q *Queries) ListBankAccountsByUsername(ctx context.Context, username strin
 		if err := rows.Scan(
 			&i.Username,
 			&i.CardNumber,
-			&i.Currency,
 			&i.Balance,
+			&i.Currency,
 			&i.CreatedAt,
 			&i.UpdateAt,
 		); err != nil {

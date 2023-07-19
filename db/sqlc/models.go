@@ -11,8 +11,8 @@ import (
 type BankAccount struct {
 	Username   string    `json:"username"`
 	CardNumber string    `json:"card_number"`
-	Currency   string    `json:"currency"`
 	Balance    int32     `json:"balance"`
+	Currency   string    `json:"currency"`
 	CreatedAt  time.Time `json:"created_at"`
 	UpdateAt   time.Time `json:"update_at"`
 }

@@ -11,8 +11,8 @@ CREATE TABLE "users" (
 CREATE TABLE "bank_accounts" (
   "username" varchar NOT NULL,
   "card_number" varchar UNIQUE NOT NULL,
-  "currency" varchar NOT NULL,
   "balance" serial NOT NULL,
+  "currency" varchar NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "update_at" timestamptz NOT NULL DEFAULT (now())
 );

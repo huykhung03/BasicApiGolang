@@ -17,3 +17,9 @@ INSERT INTO products (
 -- name: DeleteProduct :exec
 DELETE FROM products
 WHERE id_product = $1;
+
+-- name: UpdateQuantityOfProduct :one
+UPDATE products
+SET quantity = quantity - sqlc.arg(amount)
+WHERE id_product = sqlc.arg(id_product)
+RETURNING *;
