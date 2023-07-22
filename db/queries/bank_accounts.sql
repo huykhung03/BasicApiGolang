@@ -28,3 +28,7 @@ UPDATE bank_accounts
 SET balance = balance + sqlc.arg(amount)
 WHERE card_number = sqlc.arg(card_number) AND currency = $1
 RETURNING *;
+
+-- name: GetCurrencyByCardNumberAndUsername :one
+SELECT currency FROM bank_accounts
+WHERE username = $1 AND card_number = $2;

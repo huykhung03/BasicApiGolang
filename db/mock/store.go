@@ -95,19 +95,19 @@ func (mr *MockStoreMockRecorder) CreateProduct(arg0, arg1 interface{}) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateProduct", reflect.TypeOf((*MockStore)(nil).CreateProduct), arg0, arg1)
 }
 
-// CreatePuschaseHistory mocks base method.
-func (m *MockStore) CreatePuschaseHistory(arg0 context.Context, arg1 sqlc.CreatePuschaseHistoryParams) (sqlc.PurchaseHistory, error) {
+// CreatePurchaseHistory mocks base method.
+func (m *MockStore) CreatePurchaseHistory(arg0 context.Context, arg1 sqlc.CreatePurchaseHistoryParams) (sqlc.PurchaseHistory, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreatePuschaseHistory", arg0, arg1)
+	ret := m.ctrl.Call(m, "CreatePurchaseHistory", arg0, arg1)
 	ret0, _ := ret[0].(sqlc.PurchaseHistory)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// CreatePuschaseHistory indicates an expected call of CreatePuschaseHistory.
-func (mr *MockStoreMockRecorder) CreatePuschaseHistory(arg0, arg1 interface{}) *gomock.Call {
+// CreatePurchaseHistory indicates an expected call of CreatePurchaseHistory.
+func (mr *MockStoreMockRecorder) CreatePurchaseHistory(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePuschaseHistory", reflect.TypeOf((*MockStore)(nil).CreatePuschaseHistory), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePurchaseHistory", reflect.TypeOf((*MockStore)(nil).CreatePurchaseHistory), arg0, arg1)
 }
 
 // CreateUser mocks base method.
@@ -195,6 +195,21 @@ func (m *MockStore) GetBankAccountByUserNameAndCurrencyForUpdate(arg0 context.Co
 func (mr *MockStoreMockRecorder) GetBankAccountByUserNameAndCurrencyForUpdate(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetBankAccountByUserNameAndCurrencyForUpdate", reflect.TypeOf((*MockStore)(nil).GetBankAccountByUserNameAndCurrencyForUpdate), arg0, arg1)
+}
+
+// GetCurrencyByCardNumberAndUsername mocks base method.
+func (m *MockStore) GetCurrencyByCardNumberAndUsername(arg0 context.Context, arg1 sqlc.GetCurrencyByCardNumberAndUsernameParams) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetCurrencyByCardNumberAndUsername", arg0, arg1)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetCurrencyByCardNumberAndUsername indicates an expected call of GetCurrencyByCardNumberAndUsername.
+func (mr *MockStoreMockRecorder) GetCurrencyByCardNumberAndUsername(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetCurrencyByCardNumberAndUsername", reflect.TypeOf((*MockStore)(nil).GetCurrencyByCardNumberAndUsername), arg0, arg1)
 }
 
 // GetProduct mocks base method.

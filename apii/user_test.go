@@ -18,11 +18,13 @@ import (
 )
 
 func createRandomUser() sqlc.User {
+	username := random.RandomUsername()
+	email := username + "@gmail.com"
 	return sqlc.User{
-		Username:       random.RandomUsername(),
+		Username:       username,
 		FullName:       random.RandomFullName(),
 		HashedPassword: random.RandomHashedPassword(),
-		Email:          random.RandomEmail(),
+		Email:          email,
 		Level:          false,
 	}
 }
@@ -125,7 +127,7 @@ func TestGetUserAPI(t *testing.T) {
 			tc.BuildStub(store)
 
 			// * start test server and send request
-			server := NewServer(store)
+			server := newTestServer(t, store)
 			recorder := httptest.NewRecorder()
 
 			url := fmt.Sprintf("/users/%s", tc.Username)

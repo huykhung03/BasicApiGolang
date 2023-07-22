@@ -14,11 +14,14 @@ func createRandomAdmin(t *testing.T) User {
 	hashedPassword, err := util.HashPassword(random.RandomHashedPassword())
 	require.NoError(t, err)
 
+	username_tmp := random.RandomUsername()
+	email := username_tmp + "@gmail.com"
+
 	arg := CreateAdminParams{
-		Username:       random.RandomUsername(),
+		Username:       username_tmp,
 		FullName:       random.RandomFullName(),
 		HashedPassword: hashedPassword,
-		Email:          random.RandomEmail(),
+		Email:          email,
 		Level:          true,
 	}
 

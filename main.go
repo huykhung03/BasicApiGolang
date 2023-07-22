@@ -22,7 +22,10 @@ func main() {
 	}
 
 	store := sqlc.NewStore(conn)
-	server := apii.NewServer(store)
+	server, err := apii.NewServer(config, store)
+	if err != nil {
+		log.Fatal("cannot create server: ", err)
+	}
 
 	err = server.Start(config.ServerAddress)
 	if err != nil {

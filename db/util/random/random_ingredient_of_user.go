@@ -13,9 +13,3 @@ func RandomFullName() string {
 func RandomHashedPassword() string {
 	return util.RandomString(12)
 }
-
-func RandomEmail() string {
-	prefix := util.RandomString(8)
-	prefix = prefix + "@gmail.com"
-	return prefix
-}

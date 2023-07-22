@@ -13,13 +13,14 @@ type Querier interface {
 	CreateAdmin(ctx context.Context, arg CreateAdminParams) (User, error)
 	CreateBankAccount(ctx context.Context, arg CreateBankAccountParams) (BankAccount, error)
 	CreateProduct(ctx context.Context, arg CreateProductParams) (Product, error)
-	CreatePuschaseHistory(ctx context.Context, arg CreatePuschaseHistoryParams) (PurchaseHistory, error)
+	CreatePurchaseHistory(ctx context.Context, arg CreatePurchaseHistoryParams) (PurchaseHistory, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteBankAccount(ctx context.Context, cardNumber string) error
 	DeleteProduct(ctx context.Context, idProduct int32) error
 	DeleteUser(ctx context.Context, username string) error
 	GetBankAccountByUserNameAndCurrency(ctx context.Context, arg GetBankAccountByUserNameAndCurrencyParams) (BankAccount, error)
 	GetBankAccountByUserNameAndCurrencyForUpdate(ctx context.Context, arg GetBankAccountByUserNameAndCurrencyForUpdateParams) (BankAccount, error)
+	GetCurrencyByCardNumberAndUsername(ctx context.Context, arg GetCurrencyByCardNumberAndUsernameParams) (string, error)
 	GetProduct(ctx context.Context, idProduct int32) (Product, error)
 	GetPurchaseHistory(ctx context.Context, idPurchaseHistory int32) (PurchaseHistory, error)
 	GetUser(ctx context.Context, username string) (User, error)

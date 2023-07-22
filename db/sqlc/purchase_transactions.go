@@ -86,8 +86,8 @@ func (store *SQLStore) PurchaseTransaction(ctx context.Context, arg PurchaseTran
 		fmt.Println("Quantity of product after purchase: ", productAfterPurchase.Quantity)
 
 		// * step 1
-		result.PurchaseHistory, err = q.CreatePuschaseHistory(context.Background(),
-			CreatePuschaseHistoryParams{
+		result.PurchaseHistory, err = q.CreatePurchaseHistory(context.Background(),
+			CreatePurchaseHistoryParams{
 				IDProduct:         arg.Product.IDProduct,
 				Buyer:             arg.Buyer,
 				CardNumberOfBuyer: bankAccountOfBuyer.CardNumber,

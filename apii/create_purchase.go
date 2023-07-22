@@ -2,49 +2,40 @@ package apii
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"simple_shop/db/sqlc"
 
 	"github.com/gin-gonic/gin"
 )
 
-type purchaseParams struct {
-	IDProduct        int32  `json:"id_product" binding:"required"`
-	PurchaseQuantity int32  `json:"purchase_quantity" binding:"required"`
+type purchaseRequest struct {
+	IDProduct        int32  `json:"id_product" binding:"required, gte=1"`
+	PurchaseQuantity int32  `json:"purchase_quantity" binding:"required, gte=1"`
 	Buyer            string `json:"buyer" binding:"required"`
 	CardNumber       string `json:"card_number" binding:"required"`
 }
 
-func (server *Server) validBankAccount(ctx *gin.Context, username string, currency string) (sqlc.BankAccount, bool) {
-	bankAccount, err := server.store.GetBankAccountByUserNameAndCurrency(ctx,
-		sqlc.GetBankAccountByUserNameAndCurrencyParams{
-			Username: username,
-			Currency: currency,
-		})
+func (server *Server) createPurchase(ctx *gin.Context) {
+	var req purchaseRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errResponse(err))
+		return
+	}
+
+	currency, err := server.store.GetCurrencyByCardNumberAndUsername(ctx, sqlc.GetCurrencyByCardNumberAndUsernameParams{
+		Username:   req.Buyer,
+		CardNumber: req.CardNumber,
+	})
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errResponse(err))
-			return bankAccount, false
+			return
 		}
-
 		ctx.JSON(http.StatusInternalServerError, errResponse(err))
-		return bankAccount, false
+		return
 	}
 
-	if bankAccount.Currency != currency {
-		err := fmt.Errorf("account [%s] currency mismatch: %s vs %s", bankAccount.Username, bankAccount.Currency, currency)
-		ctx.JSON(http.StatusBadRequest, errResponse(err))
-		return bankAccount, false
-	}
-
-	return bankAccount, true
-}
-
-func (server *Server) createPurchase(ctx *gin.Context) {
-	var req purchaseParams
-	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errResponse(err))
+	if !server.validBankAccount(ctx, req.Buyer, currency) {
 		return
 	}
 
