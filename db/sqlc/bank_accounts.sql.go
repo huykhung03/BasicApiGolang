@@ -80,6 +80,21 @@ func (q *Queries) DeleteBankAccount(ctx context.Context, cardNumber string) erro
 	return err
 }
 
+const deleteBankAccountByCardNumberAndUserName = `-- name: DeleteBankAccountByCardNumberAndUserName :exec
+DELETE FROM bank_accounts
+WHERE card_number = $1 AND username = $2
+`
+
+type DeleteBankAccountByCardNumberAndUserNameParams struct {
+	CardNumber string `json:"card_number"`
+	Username   string `json:"username"`
+}
+
+func (q *Queries) DeleteBankAccountByCardNumberAndUserName(ctx context.Context, arg DeleteBankAccountByCardNumberAndUserNameParams) error {
+	_, err := q.db.ExecContext(ctx, deleteBankAccountByCardNumberAndUserName, arg.CardNumber, arg.Username)
+	return err
+}
+
 const getBankAccountByUserNameAndCurrency = `-- name: GetBankAccountByUserNameAndCurrency :one
 SELECT username, card_number, balance, currency, created_at, update_at FROM bank_accounts
 WHERE username = $1 AND currency = $2
@@ -129,6 +144,23 @@ func (q *Queries) GetBankAccountByUserNameAndCurrencyForUpdate(ctx context.Conte
 	return i, err
 }
 
+const getCardNumberByCardNumberAndUsername = `-- name: GetCardNumberByCardNumberAndUsername :one
+SELECT card_number FROM bank_accounts
+WHERE username = $1 AND card_number = $2
+`
+
+type GetCardNumberByCardNumberAndUsernameParams struct {
+	Username   string `json:"username"`
+	CardNumber string `json:"card_number"`
+}
+
+func (q *Queries) GetCardNumberByCardNumberAndUsername(ctx context.Context, arg GetCardNumberByCardNumberAndUsernameParams) (string, error) {
+	row := q.db.QueryRowContext(ctx, getCardNumberByCardNumberAndUsername, arg.Username, arg.CardNumber)
+	var card_number string
+	err := row.Scan(&card_number)
+	return card_number, err
+}
+
 const getCurrencyByCardNumberAndUsername = `-- name: GetCurrencyByCardNumberAndUsername :one
 SELECT currency FROM bank_accounts
 WHERE username = $1 AND card_number = $2
@@ -144,6 +176,42 @@ func (q *Queries) GetCurrencyByCardNumberAndUsername(ctx context.Context, arg Ge
 	var currency string
 	err := row.Scan(&currency)
 	return currency, err
+}
+
+const listBankAccounts = `-- name: ListBankAccounts :many
+SELECT username, card_number, balance, currency, created_at, update_at FROM bank_accounts
+WHERE username = $1
+ORDER BY username
+`
+
+func (q *Queries) ListBankAccounts(ctx context.Context, username string) ([]BankAccount, error) {
+	rows, err := q.db.QueryContext(ctx, listBankAccounts, username)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []BankAccount{}
+	for rows.Next() {
+		var i BankAccount
+		if err := rows.Scan(
+			&i.Username,
+			&i.CardNumber,
+			&i.Balance,
+			&i.Currency,
+			&i.CreatedAt,
+			&i.UpdateAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listBankAccountsByUsername = `-- name: ListBankAccountsByUsername :many

@@ -16,16 +16,21 @@ type Querier interface {
 	CreatePurchaseHistory(ctx context.Context, arg CreatePurchaseHistoryParams) (PurchaseHistory, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	DeleteBankAccount(ctx context.Context, cardNumber string) error
+	DeleteBankAccountByCardNumberAndUserName(ctx context.Context, arg DeleteBankAccountByCardNumberAndUserNameParams) error
 	DeleteProduct(ctx context.Context, idProduct int32) error
 	DeleteUser(ctx context.Context, username string) error
 	GetBankAccountByUserNameAndCurrency(ctx context.Context, arg GetBankAccountByUserNameAndCurrencyParams) (BankAccount, error)
 	GetBankAccountByUserNameAndCurrencyForUpdate(ctx context.Context, arg GetBankAccountByUserNameAndCurrencyForUpdateParams) (BankAccount, error)
+	GetCardNumberByCardNumberAndUsername(ctx context.Context, arg GetCardNumberByCardNumberAndUsernameParams) (string, error)
 	GetCurrencyByCardNumberAndUsername(ctx context.Context, arg GetCurrencyByCardNumberAndUsernameParams) (string, error)
 	GetProduct(ctx context.Context, idProduct int32) (Product, error)
+	GetPurchaseHistories(ctx context.Context, buyer string) ([]PurchaseHistory, error)
+	GetPurchaseHistoriesByIdProduct(ctx context.Context, idProduct int32) ([]PurchaseHistory, error)
 	GetPurchaseHistory(ctx context.Context, idPurchaseHistory int32) (PurchaseHistory, error)
 	GetUser(ctx context.Context, username string) (User, error)
+	ListBankAccounts(ctx context.Context, username string) ([]BankAccount, error)
 	ListBankAccountsByUsername(ctx context.Context, username string) ([]BankAccount, error)
-	ListProducts(ctx context.Context) ([]Product, error)
+	ListProducts(ctx context.Context, owner string) ([]Product, error)
 	ListPuschaseHistories(ctx context.Context) ([]PurchaseHistory, error)
 	ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error)
 	UpdateHashedPasswordOfUser(ctx context.Context, arg UpdateHashedPasswordOfUserParams) (User, error)

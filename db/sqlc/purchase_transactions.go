@@ -37,14 +37,14 @@ func (store *SQLStore) PurchaseTransaction(ctx context.Context, arg PurchaseTran
 		bankAccountOfBuyer, err := q.GetBankAccountByUserNameAndCurrencyForUpdate(context.Background(),
 			GetBankAccountByUserNameAndCurrencyForUpdateParams{
 				Username: arg.Buyer,
-				Currency: "USD",
+				Currency: arg.Product.Currency,
 			})
 		if err != nil {
-			return err
+			return errors.New("The customer does not have a bank account that matches the currency of the goods")
 		}
 
-		if bankAccountOfBuyer.Currency != arg.Product.Currency {
-			return errors.New("Currency's buyer don't match with currency's product")
+		if arg.CardNumberOfBuyer != bankAccountOfBuyer.CardNumber {
+			return errors.New("The currency of the bank account does not match the currency of the product")
 		}
 
 		productBeforePurchase, err := q.UpdateQuantityOfProduct(context.Background(),
@@ -121,7 +121,7 @@ func (store *SQLStore) PurchaseTransaction(ctx context.Context, arg PurchaseTran
 		bankAccountOfSeller, err := q.GetBankAccountByUserNameAndCurrencyForUpdate(context.Background(),
 			GetBankAccountByUserNameAndCurrencyForUpdateParams{
 				Username: arg.Product.Owner,
-				Currency: "USD",
+				Currency: arg.Product.Currency,
 			})
 		if err != nil {
 			return err

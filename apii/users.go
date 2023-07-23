@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"simple_shop/db/sqlc"
 	"simple_shop/db/util"
+	"simple_shop/token"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -61,6 +62,11 @@ func (server *Server) createUser(ctx *gin.Context) {
 		// * this is how to print the error
 		if pqErr, oke := err.(*pq.Error); oke {
 			log.Println(pqErr.Code.Name())
+			switch pqErr.Code.Name() {
+			case "unique_violation":
+				ctx.JSON(http.StatusForbidden, errResponse(err))
+				return
+			}
 		}
 		ctx.JSON(http.StatusInternalServerError, errResponse(err))
 		return
@@ -71,58 +77,23 @@ func (server *Server) createUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, res)
 }
 
-type getUserRequest struct {
-	Username string `uri:"username" binding:"required,min=8"`
-}
-
 func (server *Server) getUser(ctx *gin.Context) {
-	var req getUserRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errResponse(err))
-		return
-	}
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
 
-	user, err := server.store.GetUser(ctx, req.Username)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			ctx.JSON(http.StatusNotFound, errResponse(err))
-			return
-		}
-		ctx.JSON(http.StatusInternalServerError, errResponse(err))
-		return
-	}
-
-	ctx.JSON(http.StatusOK, user)
-}
-
-type listUsersParams struct {
-	PageId   uint16 `form:"page_id" binding:"required,min=1"`
-	PageSize uint16 `form:"page_size" binding:"required,min=5,max=10"`
-}
-
-func (server *Server) listUsers(ctx *gin.Context) {
-	var req listUsersParams
-	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, errResponse(err))
-		return
-	}
-
-	users, err := server.store.ListUsers(ctx,
-		sqlc.ListUsersParams{
-			Limit:  int32(req.PageSize),
-			Offset: (int32(req.PageId) - 1) * int32(req.PageSize),
-		})
+	user, err := server.store.GetUser(ctx, authPayload.Username)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, users)
+	res := newCreateUserResponse(user)
+
+	ctx.JSON(http.StatusOK, res)
 }
 
 type loginUserRequest struct {
-	Username string `json:"username" binding:"required,min=8"`
-	Password string `json:"password" binding:"required,min=7" `
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required" `
 }
 
 type loginUserResponse struct {
@@ -167,4 +138,16 @@ func (server *Server) loginUser(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, res)
+}
+
+func (server *Server) listPurchaseHistoresOfUser(ctx *gin.Context) {
+	authPayload := ctx.MustGet(authorizationPayloadKey).(*token.Payload)
+
+	listPurchases, err := server.store.GetPurchaseHistories(ctx, authPayload.Username)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, listPurchases)
 }

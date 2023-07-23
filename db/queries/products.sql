@@ -5,6 +5,7 @@ LIMIT 1;
 
 -- name: ListProducts :many
 SELECT * FROM products
+WHERE owner = $1
 ORDER BY id_product;
 
 -- name: CreateProduct :one

@@ -85,11 +85,12 @@ func (q *Queries) GetProduct(ctx context.Context, idProduct int32) (Product, err
 
 const listProducts = `-- name: ListProducts :many
 SELECT id_product, product_name, kind_of_product, owner, currency, price, quantity, created_at, update_at FROM products
+WHERE owner = $1
 ORDER BY id_product
 `
 
-func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
-	rows, err := q.db.QueryContext(ctx, listProducts)
+func (q *Queries) ListProducts(ctx context.Context, owner string) ([]Product, error) {
+	rows, err := q.db.QueryContext(ctx, listProducts, owner)
 	if err != nil {
 		return nil, err
 	}

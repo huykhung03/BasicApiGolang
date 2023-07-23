@@ -37,6 +37,78 @@ func (q *Queries) CreatePurchaseHistory(ctx context.Context, arg CreatePurchaseH
 	return i, err
 }
 
+const getPurchaseHistories = `-- name: GetPurchaseHistories :many
+SELECT id_purchase_history, id_product, buyer, card_number_of_buyer, created_at, update_at FROM purchase_history
+WHERE buyer = $1
+ORDER BY created_at
+`
+
+func (q *Queries) GetPurchaseHistories(ctx context.Context, buyer string) ([]PurchaseHistory, error) {
+	rows, err := q.db.QueryContext(ctx, getPurchaseHistories, buyer)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []PurchaseHistory{}
+	for rows.Next() {
+		var i PurchaseHistory
+		if err := rows.Scan(
+			&i.IDPurchaseHistory,
+			&i.IDProduct,
+			&i.Buyer,
+			&i.CardNumberOfBuyer,
+			&i.CreatedAt,
+			&i.UpdateAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getPurchaseHistoriesByIdProduct = `-- name: GetPurchaseHistoriesByIdProduct :many
+SELECT id_purchase_history, id_product, buyer, card_number_of_buyer, created_at, update_at FROM purchase_history
+WHERE id_product = $1
+ORDER BY created_at
+`
+
+func (q *Queries) GetPurchaseHistoriesByIdProduct(ctx context.Context, idProduct int32) ([]PurchaseHistory, error) {
+	rows, err := q.db.QueryContext(ctx, getPurchaseHistoriesByIdProduct, idProduct)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []PurchaseHistory{}
+	for rows.Next() {
+		var i PurchaseHistory
+		if err := rows.Scan(
+			&i.IDPurchaseHistory,
+			&i.IDProduct,
+			&i.Buyer,
+			&i.CardNumberOfBuyer,
+			&i.CreatedAt,
+			&i.UpdateAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getPurchaseHistory = `-- name: GetPurchaseHistory :one
 SELECT id_purchase_history, id_product, buyer, card_number_of_buyer, created_at, update_at FROM purchase_history
 WHERE id_purchase_history = $1

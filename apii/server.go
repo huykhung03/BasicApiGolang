@@ -15,12 +15,35 @@ func (server *Server) setUpServer() {
 	router := gin.Default()
 
 	// * add routes to router
-	router.POST("/users", server.createUser)
-	router.GET("/users/:username", server.getUser)
-	router.GET("/users", server.listUsers)
-	router.POST("/users/login", server.loginUser)
 
-	router.POST("/purchases", server.createPurchase)
+	router.POST("/create-user", server.createUser)
+	router.POST("/create-admin", server.createAdmin)
+	router.POST("/login", server.loginUser)
+
+	// authRoutes := router.Group("/").Use(authMiddleware(server.tokenMaker))
+
+	user := router.Group("/user").Use(authMiddleware(server.tokenMaker))
+	{
+		user.GET("/info", server.getUser)
+		user.POST("/purchase", server.createPurchase)
+		user.GET("/list-bank-accounts", server.listBankAccounts)
+		user.GET("/list-purchase-histories", server.listPurchaseHistoresOfUser)
+	}
+
+	admin := router.Group("/admin").Use(authMiddleware(server.tokenMaker))
+	{
+		admin.POST("/create-product", server.createProduct)
+		admin.POST("/delete-product", server.deleteProduct)
+		admin.GET("/list-products", server.listProducts)
+		admin.GET("/:id_product", server.getProduct)
+		admin.GET("/list-purchase-histories", server.listPurchaseHistoriesOfAdmin)
+	}
+
+	bankAccount := router.Group("/bank-account").Use(authMiddleware(server.tokenMaker))
+	{
+		bankAccount.POST("/create-bank-account", server.createBankAccount)
+		bankAccount.POST("/delete-bank-accounts", server.deleteBankAccount)
+	}
 
 	server.router = router
 }
