@@ -20,6 +20,7 @@ func NewJWTMaker(secretKey string) (Maker, error) {
 	if len(secretKey) < minSecretKeySize {
 		return nil, fmt.Errorf("invalid key size: must be at least %d characters", minSecretKeySize)
 	}
+
 	return &JWTMaker{secretKey}, nil
 }
 
@@ -30,27 +31,38 @@ func (maker *JWTMaker) CreateToken(username string, duration time.Duration) (str
 		return "", payload, err
 	}
 
+	// * Declare the token with the algorithm used for signing, and the claims
 	jwtToken := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
+	// * Create the JWT string
 	token, err := jwtToken.SignedString([]byte(maker.secretKey))
+
 	return token, payload, err
 }
 
 // VerifyToken checks if the token is valid or not
 func (maker *JWTMaker) VerifyToken(token string) (*Payload, error) {
+	// * Check if the algorithm we registered matches or not
+	// * If true
+	// * return the sercetkey
 	keyFunc := func(token *jwt.Token) (interface{}, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
 			return nil, ErrInvalidToken
 		}
+
 		return []byte(maker.secretKey), nil
 	}
 
+	// * Check the input token with keyFunc and pass result into &Payload{}
 	jwtToken, err := jwt.ParseWithClaims(token, &Payload{}, keyFunc)
 	if err != nil {
+		// * There will be two scenarios
+		// * One: The token is expired
 		verr, ok := err.(*jwt.ValidationError)
 		if ok && errors.Is(verr.Inner, ErrExpiredToken) {
 			return nil, ErrExpiredToken
 		}
+		// * Two: The token is invalid
 		return nil, ErrInvalidToken
 	}
 

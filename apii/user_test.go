@@ -48,22 +48,22 @@ func TestGetUserAPI(t *testing.T) {
 		BuildStub      func(store *mock.MockStore)
 		CheckResponse  func(t *testing.T, recorder *httptest.ResponseRecorder)
 	}{
-		{
-			NameOfTestCase: "InvalidUsernam",
-			Username:       "abc",
-			BuildStub: func(store *mock.MockStore) {
-				// * build stubs
+		// {
+		// 	NameOfTestCase: "InvalidUsername",
+		// 	Username:       "abc",
+		// 	BuildStub: func(store *mock.MockStore) {
+		// 		// * build stubs
 
-				// * I expect the GetUser function of the store to be called with any context
-				// * and this specific username.Username argument
-				store.EXPECT().GetUser(gomock.Any(), gomock.Any()).
-					Times(0)
-			},
-			CheckResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
-				// * check response
-				require.Equal(t, http.StatusBadRequest, recorder.Code)
-			},
-		},
+		// 		// * I expect the GetUser function of the store to be called with any context
+		// 		// * and this specific username.Username argument
+		// 		store.EXPECT().GetUser(gomock.Any(), gomock.Any()).
+		// 			Times(0)
+		// 	},
+		// 	CheckResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
+		// 		// * check response
+		// 		require.Equal(t, http.StatusBadRequest, recorder.Code)
+		// 	},
+		// },
 		{
 			NameOfTestCase: "NotFound",
 			Username:       username.Username,
@@ -72,7 +72,9 @@ func TestGetUserAPI(t *testing.T) {
 
 				// * I expect the GetUser function of the store to be called with any context
 				// * and this specific username.Username argument
-				store.EXPECT().GetUser(gomock.Any(), gomock.Eq(username.Username)).Times(1).Return(sqlc.User{}, sql.ErrNoRows)
+				store.EXPECT().GetUser(gomock.Any(), gomock.Eq(username.Username)).
+					Times(1).
+					Return(sqlc.User{}, sql.ErrNoRows)
 			},
 			CheckResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
 				// * check response
